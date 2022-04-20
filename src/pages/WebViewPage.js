@@ -8,7 +8,7 @@ const mark = require('../assets/mark-string');
 const WebViewPage = ({navigation}) => {
   const colorHTML = 'black';
   const fontSize = 15;
-  const AturanID = 17579;
+  const [AturanID, setAturanID] = useState(17579);
   const webviewRef = useRef();
   const [dataSource, setDataSource] = useState('');
   const [idAturan, setIdAturan] = useState(AturanID);
@@ -16,7 +16,7 @@ const WebViewPage = ({navigation}) => {
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
-    getData();
+    getData(AturanID);
   }, []);
 
   const DateHtml = dataSource => {
@@ -27,11 +27,12 @@ const WebViewPage = ({navigation}) => {
     setIsLoading(false);
   };
 
-  const getData = () => {
+  const getData = ID => {
+    setIsLoading(true);
     try {
       const result = axios
         .post(
-          'https://betta.ortax.org/api/aturan/show/' + idAturan,
+          'https://betta.ortax.org/api/aturan/show/' + ID,
           {},
           {
             headers: {
@@ -41,6 +42,8 @@ const WebViewPage = ({navigation}) => {
         )
         .then(response => {
           const res = response.data.list;
+          // setDataSource(res.isi);
+          // setIsLoading(false);
           DateHtml(res.isi);
         });
       return result;
@@ -104,12 +107,11 @@ const WebViewPage = ({navigation}) => {
                 .split('https://datacenter.ortax.org/ortax/aturan/show/')
                 .join('');
               console.log('id', id);
-              setIdAturan(id);
+              // setIdAturan(id);
               if (id !== 'about:blank' || id !== 'about:blank#blocked') {
-                getData();
+                getData(id);
                 return false;
-              }
-              if (e.url === 'about:blank') {
+              } else if (e.url === 'about:blank') {
                 null;
                 return false;
               } else if (e.url === 'about:blank#blocked') {

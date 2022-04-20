@@ -5,6 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HtmlWithHeuristicPage from './pages/HtmlWithHeuristicPage';
 import WebViewPage from './pages/WebViewPage';
 import HtmlWithoutHeuristicPage from './pages/HtmlWithoutHeuristicPage';
+import HtmlTablePlugin from './pages/HtmlTablePlugin'
 
 
 function HomeScreen({navigation}) {
@@ -65,6 +66,7 @@ function App() {
           component={HtmlWithoutHeuristicPage}
         />
         <Stack.Screen name="Webview" component={WebViewPage} />
+        <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
       </Stack.Navigator>
     </NavigationContainer>
   );
