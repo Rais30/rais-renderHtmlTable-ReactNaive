@@ -1,4 +1,13 @@
-import {StyleSheet, View, Alert, LogBox, ActivityIndicator,TouchableOpacity,Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  LogBox,
+  ActivityIndicator,
+  TouchableOpacity,
+  Text,
+  BackHandler,
+  Alert,
+} from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
 import WebView from 'react-native-webview';
 import axios from 'axios';
@@ -6,7 +15,7 @@ import axios from 'axios';
 const mark = require('../assets/mark-string');
 
 const WebViewPage = ({route, navigation}) => {
- //GetID
+  //GetID
   const {idPeraturan} = route.params;
 
   const colorHTML = 'black';
@@ -19,6 +28,7 @@ const WebViewPage = ({route, navigation}) => {
   useEffect(() => {
     LogBox.ignoreAllLogs();
     getData(idPeraturan);
+    // onBackApp(idPeraturan,idAturan)
   }, []);
 
   const DateHtml = (dataSource, dataID) => {
@@ -30,13 +40,34 @@ const WebViewPage = ({route, navigation}) => {
     setIsLoading(false);
   };
 
-  const goBack = (IDawal, idini) => {
-    if (IDawal == idini) {
-      console.log('ID awal = ' + IDawal, 'ID Saat ini = ' + idini);
-      navigation.navigate('Table Demo');
+  const onBackApp = (ID, id) => {
+    const backAction = () => {
+      // Alert.alert("Hold on!", "Are you sure you want to go back?", [
+      //   {
+      //     text: "Cancel",
+      //     onPress: () => null,
+      //     style: "cancel"
+      //   },
+      //   { text: "YES", onPress: () => BackHandler.exitApp() }
+      // ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction(),
+    );
+
+    return () => backHandler.remove();
+  };
+
+  const goBack = (ID, id) => {
+    if (ID == id) {
+      console.log('ID awal = ' + ID, 'ID Saat ini = ' + id);
+      navigation.replace('Table Demo');
     } else {
-      console.log('ID awal = ' + IDawal, 'ID Saat ini = ' + idini);
-      getData(IDawal);
+      console.log('ID awal = ' + ID, 'ID Saat ini = ' + id);
+      getData(ID);
     }
   };
 
@@ -66,20 +97,22 @@ const WebViewPage = ({route, navigation}) => {
     }
   };
 
- const onBack=(ID,id)=>{
-   return(
-    <TouchableOpacity
-    style={{
-      paddingVertical: 15,
-      paddingHorizontal: 15,
-      backgroundColor: '#1B4C8C',
-      borderRadius: 50,
-    }}
-    onPress={() => goBack(ID,id)}>
-    <Text style={{color: 'white',fontSize:16,alignSelf:'center'}}>Back</Text>
-  </TouchableOpacity>
-   )
- }
+  const onBack = (ID, id) => {
+    return (
+      <TouchableOpacity
+        style={{
+          paddingVertical: 15,
+          paddingHorizontal: 15,
+          backgroundColor: '#1B4C8C',
+          borderRadius: 50,
+        }}
+        onPress={() => goBack(ID, id)}>
+        <Text style={{color: 'white', fontSize: 16, alignSelf: 'center'}}>
+          Back
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -90,7 +123,7 @@ const WebViewPage = ({route, navigation}) => {
   } else {
     return (
       <View style={styles.container}>
-        {/* {onBack(idPeraturan,idAturan)} */}
+        {onBack(idPeraturan, idAturan)}
         <WebView
           showsVerticalScrollIndicator={false}
           style={{
@@ -165,3 +198,5 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
 });
+
+//MainApplication

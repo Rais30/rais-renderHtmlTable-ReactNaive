@@ -1,5 +1,5 @@
-import * as React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, TouchableOpacity, BackHandler,Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HtmlWithHeuristicPage from './pages/HtmlWithHeuristicPage';
@@ -8,6 +8,28 @@ import HtmlWithoutHeuristicPage from './pages/HtmlWithoutHeuristicPage';
 import HtmlTablePlugin from './pages/HtmlTablePlugin';
 
 function HomeScreen({navigation}) {
+  
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() }
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text style={{marginBottom: 40, fontSize: 25}}>
@@ -53,23 +75,21 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Table Demo" component={HomeScreen} />
-          <Stack.Screen
-            name="Html With Heuristic"
-            component={HtmlWithHeuristicPage}
-          />
-          <Stack.Screen
-            name="Html Without Heuristic"
-            component={HtmlWithoutHeuristicPage}
-          />
-          <Stack.Screen name="Webview" component={WebViewPage} />
-          <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
-        </Stack.Navigator>
-      </NavigationContainer>
-
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Table Demo" component={HomeScreen} />
+        <Stack.Screen
+          name="Html With Heuristic"
+          component={HtmlWithHeuristicPage}
+        />
+        <Stack.Screen
+          name="Html Without Heuristic"
+          component={HtmlWithoutHeuristicPage}
+        />
+        <Stack.Screen name="Webview" component={WebViewPage} />
+        <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
