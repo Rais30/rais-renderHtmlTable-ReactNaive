@@ -5,8 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HtmlWithHeuristicPage from './pages/HtmlWithHeuristicPage';
 import WebViewPage from './pages/WebViewPage';
 import HtmlWithoutHeuristicPage from './pages/HtmlWithoutHeuristicPage';
-import HtmlTablePlugin from './pages/HtmlTablePlugin'
-
+import HtmlTablePlugin from './pages/HtmlTablePlugin';
 
 function HomeScreen({navigation}) {
   return (
@@ -43,7 +42,7 @@ function HomeScreen({navigation}) {
           backgroundColor: '#1B4C8C',
           borderRadius: 10,
         }}
-        onPress={() => navigation.navigate('Webview')}>
+        onPress={() => navigation.navigate('Webview', {idPeraturan: 17579})}>
         <Text style={{color: 'white'}}>Webview</Text>
       </TouchableOpacity>
     </View>
@@ -54,21 +53,23 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Table Demo" component={HomeScreen} />
-        <Stack.Screen
-          name="Html With Heuristic"
-          component={HtmlWithHeuristicPage}
-        />
-        <Stack.Screen
-          name="Html Without Heuristic"
-          component={HtmlWithoutHeuristicPage}
-        />
-        <Stack.Screen name="Webview" component={WebViewPage} />
-        <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Table Demo" component={HomeScreen} />
+          <Stack.Screen
+            name="Html With Heuristic"
+            component={HtmlWithHeuristicPage}
+          />
+          <Stack.Screen
+            name="Html Without Heuristic"
+            component={HtmlWithoutHeuristicPage}
+          />
+          <Stack.Screen name="Webview" component={WebViewPage} />
+          <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
+        </Stack.Navigator>
+      </NavigationContainer>
+
   );
 }
 

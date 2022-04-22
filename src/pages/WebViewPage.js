@@ -1,30 +1,43 @@
-import {StyleSheet, View, Alert, LogBox, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, Alert, LogBox, ActivityIndicator,TouchableOpacity,Text} from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
 import WebView from 'react-native-webview';
 import axios from 'axios';
 
 const mark = require('../assets/mark-string');
 
-const WebViewPage = ({navigation}) => {
+const WebViewPage = ({route, navigation}) => {
+ //GetID
+  const {idPeraturan} = route.params;
+
   const colorHTML = 'black';
   const fontSize = 15;
-  const [AturanID, setAturanID] = useState(17579);
   const webviewRef = useRef();
   const [dataSource, setDataSource] = useState('');
-  const [idAturan, setIdAturan] = useState(AturanID);
+  const [idAturan, setIdAturan] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
-    getData(AturanID);
+    getData(idPeraturan);
   }, []);
 
-  const DateHtml = dataSource => {
+  const DateHtml = (dataSource, dataID) => {
     const search = `href=\"/ortax/aturan/show/`;
     const replaceWith = `href=\"https://datacenter.ortax.org/ortax/aturan/show/`;
     const replaceAll = dataSource.split(search).join(replaceWith);
     setDataSource(replaceAll);
+    setIdAturan(dataID);
     setIsLoading(false);
+  };
+
+  const goBack = (IDawal, idini) => {
+    if (IDawal == idini) {
+      console.log('ID awal = ' + IDawal, 'ID Saat ini = ' + idini);
+      navigation.navigate('Table Demo');
+    } else {
+      console.log('ID awal = ' + IDawal, 'ID Saat ini = ' + idini);
+      getData(IDawal);
+    }
   };
 
   const getData = ID => {
@@ -44,13 +57,29 @@ const WebViewPage = ({navigation}) => {
           const res = response.data.list;
           // setDataSource(res.isi);
           // setIsLoading(false);
-          DateHtml(res.isi);
+          DateHtml(res.isi, res.id);
+          console.log('ini ID nya = ' + res.id);
         });
       return result;
     } catch (error) {
       console.error(error);
     }
   };
+
+ const onBack=(ID,id)=>{
+   return(
+    <TouchableOpacity
+    style={{
+      paddingVertical: 15,
+      paddingHorizontal: 15,
+      backgroundColor: '#1B4C8C',
+      borderRadius: 50,
+    }}
+    onPress={() => goBack(ID,id)}>
+    <Text style={{color: 'white',fontSize:16,alignSelf:'center'}}>Back</Text>
+  </TouchableOpacity>
+   )
+ }
 
   if (isLoading) {
     return (
@@ -61,6 +90,7 @@ const WebViewPage = ({navigation}) => {
   } else {
     return (
       <View style={styles.container}>
+        {/* {onBack(idPeraturan,idAturan)} */}
         <WebView
           showsVerticalScrollIndicator={false}
           style={{
@@ -107,7 +137,6 @@ const WebViewPage = ({navigation}) => {
                 .split('https://datacenter.ortax.org/ortax/aturan/show/')
                 .join('');
               console.log('id', id);
-              // setIdAturan(id);
               if (id !== 'about:blank' || id !== 'about:blank#blocked') {
                 getData(id);
                 return false;
