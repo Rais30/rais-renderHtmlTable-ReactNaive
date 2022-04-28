@@ -6,6 +6,8 @@ import HtmlWithHeuristicPage from './pages/HtmlWithHeuristicPage';
 import WebViewPage from './pages/WebViewPage';
 import HtmlWithoutHeuristicPage from './pages/HtmlWithoutHeuristicPage';
 import HtmlTablePlugin from './pages/HtmlTablePlugin';
+// import demo from './pages/demo';
+
 
 function HomeScreen({navigation}) {
   
@@ -54,19 +56,31 @@ function HomeScreen({navigation}) {
           backgroundColor: '#1B4C8C',
           borderRadius: 10,
         }}
-        onPress={() => navigation.navigate('Html Without Heuristic')}>
-        <Text style={{color: 'white'}}>Html Without Heuristic</Text>
+        onPress={() => navigation.navigate('Html Table Plugin')}>
+        <Text style={{color: 'white'}}>Html Table Plugin</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={{
           paddingVertical: 10,
           paddingHorizontal: 50,
+          marginBottom: 20,
           backgroundColor: '#1B4C8C',
           borderRadius: 10,
         }}
         onPress={() => navigation.navigate('Webview', {idPeraturan: 17579})}>
         <Text style={{color: 'white'}}>Webview</Text>
       </TouchableOpacity>
+      {/* <TouchableOpacity
+        style={{
+          paddingVertical: 10,
+          paddingHorizontal: 50,
+          marginBottom: 20,
+          backgroundColor: '#1B4C8C',
+          borderRadius: 10,
+        }}
+        onPress={() => navigation.navigate('demo', {idPeraturan: 17579})}>
+        <Text style={{color: 'white'}}>demo</Text>
+      </TouchableOpacity> */}
     </View>
   );
 }
@@ -88,6 +102,7 @@ function App() {
         />
         <Stack.Screen name="Webview" component={WebViewPage} />
         <Stack.Screen name="Html Table Plugin" component={HtmlTablePlugin} />
+        {/* <Stack.Screen name="demo" component={demo} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

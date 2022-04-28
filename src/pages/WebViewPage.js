@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Text,
   BackHandler,
-  Alert,
 } from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
 import WebView from 'react-native-webview';
@@ -22,57 +21,47 @@ const WebViewPage = ({route, navigation}) => {
   const fontSize = 15;
   const webviewRef = useRef();
   const [dataSource, setDataSource] = useState('');
-  const [idAturan, setIdAturan] = useState();
+  const [idAturan, setIdAturan] = useState([idPeraturan]);
   const [isLoading, setIsLoading] = useState(true);
+  const length = idAturan.length - 1;
 
   useEffect(() => {
     LogBox.ignoreAllLogs();
-    getData(idPeraturan);
-    // onBackApp(idPeraturan,idAturan)
+    getData(idAturan);
   }, []);
 
-  const DateHtml = (dataSource, dataID) => {
+  const DateHtml = dataSource => {
     const search = `href=\"/ortax/aturan/show/`;
     const replaceWith = `href=\"https://datacenter.ortax.org/ortax/aturan/show/`;
     const replaceAll = dataSource.split(search).join(replaceWith);
     setDataSource(replaceAll);
-    setIdAturan(dataID);
     setIsLoading(false);
   };
 
-  const onBackApp = (ID, id) => {
-    const backAction = () => {
-      // Alert.alert("Hold on!", "Are you sure you want to go back?", [
-      //   {
-      //     text: "Cancel",
-      //     onPress: () => null,
-      //     style: "cancel"
-      //   },
-      //   { text: "YES", onPress: () => BackHandler.exitApp() }
-      // ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction(),
-    );
-
-    return () => backHandler.remove();
-  };
-
   const goBack = (ID, id) => {
+    // idAturan.pop();
     if (ID == id) {
-      console.log('ID awal = ' + ID, 'ID Saat ini = ' + id);
       navigation.replace('Table Demo');
     } else {
-      console.log('ID awal = ' + ID, 'ID Saat ini = ' + id);
-      getData(ID);
+      idAturan.pop();
+      console.log('ini data else ' + idAturan.join());
+      getData(idAturan[length - 1]);
     }
   };
 
+  BackHandler.addEventListener('hardwareBackPress', function () {
+    if (idAturan[0] == idAturan[length]) {
+      navigation.replace('Table Demo');
+      return true;
+    }
+    idAturan.pop();
+    getData(idAturan[length - 1]);
+    return true;
+  });
+
   const getData = ID => {
     setIsLoading(true);
+    // console.log('getData ID nya '+ ID);
     try {
       const result = axios
         .post(
@@ -86,9 +75,9 @@ const WebViewPage = ({route, navigation}) => {
         )
         .then(response => {
           const res = response.data.list;
-          // setDataSource(res.isi);
-          // setIsLoading(false);
           DateHtml(res.isi, res.id);
+          // setDataSource(res.isi);
+          // setIsLoading(false)
           console.log('ini ID nya = ' + res.id);
         });
       return result;
@@ -106,7 +95,9 @@ const WebViewPage = ({route, navigation}) => {
           backgroundColor: '#1B4C8C',
           borderRadius: 50,
         }}
-        onPress={() => goBack(ID, id)}>
+        onPress={() => {
+          goBack(ID, id);
+        }}>
         <Text style={{color: 'white', fontSize: 16, alignSelf: 'center'}}>
           Back
         </Text>
@@ -121,9 +112,10 @@ const WebViewPage = ({route, navigation}) => {
       </View>
     );
   } else {
+    console.log('data Array id ' + idAturan.join());
     return (
       <View style={styles.container}>
-        {onBack(idPeraturan, idAturan)}
+        {/* {onBack(idPeraturan, idAturan[length])} */}
         <WebView
           showsVerticalScrollIndicator={false}
           style={{
@@ -165,13 +157,19 @@ const WebViewPage = ({route, navigation}) => {
           originWhitelist={['*']}
           onShouldStartLoadWithRequest={e => {
             if (e.url.slice(0, 4) === 'http') {
-              console.log('e', e.url);
+              // console.log('e', e.url);
               const id = e.url
+                .split('about:///xsim/ortax/?mod=aturan&page=show&id=')
+                .join('')
+                .split('about:///ortax/aturan/show/')
+                .join('')
                 .split('https://datacenter.ortax.org/ortax/aturan/show/')
                 .join('');
-              console.log('id', id);
+              // console.log('id', id);
               if (id !== 'about:blank' || id !== 'about:blank#blocked') {
                 getData(id);
+                // pushID(id)
+                idAturan.push(id);
                 return false;
               } else if (e.url === 'about:blank') {
                 null;
@@ -198,5 +196,3 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
 });
-
-//MainApplication
